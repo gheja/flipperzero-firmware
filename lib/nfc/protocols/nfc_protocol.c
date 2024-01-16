@@ -61,6 +61,7 @@ static const NfcProtocol nfc_protocol_iso14443_3b_children_protocol[] = {
 /** List of ISO14443-4A child protocols. */
 static const NfcProtocol nfc_protocol_iso14443_4a_children_protocol[] = {
     NfcProtocolMfDesfire,
+    NfcProtocolEmv,
 };
 
 /** List of ISO115693-3 child protocols. */
@@ -147,6 +148,12 @@ static const NfcProtocolTreeNode nfc_protocol_nodes[NfcProtocolNum] = {
             .children_protocol = NULL,
         },
     /* Add new protocols here */
+    [NfcProtocolEmv] =
+        {
+            .parent_protocol = NfcProtocolIso14443_4a,
+            .children_num = 0,
+            .children_protocol = NULL,
+        },
 };
 
 NfcProtocol nfc_protocol_get_parent(NfcProtocol protocol) {

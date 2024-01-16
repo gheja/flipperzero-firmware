@@ -20,4 +20,6 @@ const NfcListenerBase* nfc_listeners_api[NfcProtocolNum] = {
     [NfcProtocolSlix] = &nfc_listener_slix,
     [NfcProtocolSt25tb] = NULL,
     [NfcProtocolFelica] = &nfc_listener_felica,
+    /* Add new protocols here */
+    [NfcProtocolEmv] = NULL,
 };
