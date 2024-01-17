@@ -49,4 +49,5 @@ void nfc_render_emv_info_screen(const EmvData* data, FuriString* str) {
     nfc_render_emv_issuer(data, str);
     nfc_render_emv_card_number(data, str);
     nfc_render_emv_card_expiration(data, str);
+    furi_string_cat(str, data->app->extra_text);
 }

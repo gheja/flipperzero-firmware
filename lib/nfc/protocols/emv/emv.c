@@ -20,6 +20,7 @@ EmvApplicationCard* emv_app_alloc() {
     EmvApplicationCard* app = malloc(sizeof(EmvApplicationCard));
     app->name = furi_string_alloc();
     app->card_number = furi_string_alloc();
+    app->extra_text = furi_string_alloc();
     emv_app_reset(app);
     return app;
 }
@@ -28,9 +29,11 @@ void emv_app_free(EmvApplicationCard* app) {
     furi_assert(app);
     furi_assert(app->name);
     furi_assert(app->card_number);
+    furi_assert(app->extra_text);
 
     furi_string_free(app->name);
     furi_string_free(app->card_number);
+    furi_string_free(app->extra_text);
     free(app);
 }
 
@@ -38,6 +41,7 @@ void emv_app_reset(EmvApplicationCard* app) {
     furi_assert(app);
     furi_assert(app->name);
     furi_assert(app->card_number);
+    furi_assert(app->extra_text);
 
     app->priority = 0;
 
@@ -59,16 +63,20 @@ void emv_app_reset(EmvApplicationCard* app) {
 
     app->transaction_log_sfi = 0;
     app->transaction_log_length = 0;
+
+    furi_string_reset(app->extra_text);
 }
 
 void emv_app_copy(EmvApplicationCard* app, const EmvApplicationCard* other) {
     furi_assert(app);
     furi_assert(app->name);
     furi_assert(app->card_number);
+    furi_assert(app->extra_text);
 
     furi_assert(other);
     furi_assert(other->name);
     furi_assert(other->card_number);
+    furi_assert(other->extra_text);
 
     app->priority = other->priority;
 
@@ -90,6 +98,8 @@ void emv_app_copy(EmvApplicationCard* app, const EmvApplicationCard* other) {
 
     app->transaction_log_sfi = other->transaction_log_sfi;
     app->transaction_log_length = other->transaction_log_length;
+
+    furi_string_set(app->extra_text, other->extra_text);
 }
 
 EmvData* emv_alloc() {

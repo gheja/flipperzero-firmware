@@ -59,6 +59,7 @@ typedef struct {
     APDU afl;
     uint8_t transaction_log_sfi;
     uint8_t transaction_log_length;
+    FuriString* extra_text; // this is just so I don't have to do a full rebuild every time
 } EmvApplicationCard;
 
 #define EMV_CMD_GET_VERSION (0x60)
