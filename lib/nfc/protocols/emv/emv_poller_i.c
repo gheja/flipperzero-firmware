@@ -244,6 +244,27 @@ bool emv_decode_response_bit_buffer(const BitBuffer* buffer, EmvApplicationCard*
     return emv_decode_response(data, len, app);
 }
 
+EmvError emv_send_and_decode_response(EmvPoller* instance, EmvData* data) {
+    EmvError error = EmvErrorNone;
+
+    do {
+        error = emv_send_chunks(instance, instance->input_buffer, instance->result_buffer);
+
+        if(error != EmvErrorNone) {
+            FURI_LOG_D(TAG, "emv_send_chunks() failed, error: %d", error);
+            break;
+        }
+
+        if(!emv_decode_response_bit_buffer(instance->result_buffer, data->app)) {
+            FURI_LOG_D(TAG, "emv_decode_response_bit_buffer() failed");
+            error = EmvErrorProtocol;
+            break;
+        }
+    } while(false);
+
+    return error;
+}
+
 EmvError emv_poller_select_ppse(EmvPoller* instance) {
     furi_assert(instance);
     EmvData* data = instance->data;
@@ -264,16 +285,7 @@ EmvError emv_poller_select_ppse(EmvPoller* instance) {
     bit_buffer_append_bytes(
         instance->input_buffer, emv_select_ppse_cmd, sizeof(emv_select_ppse_cmd));
 
-    do {
-        error = emv_send_chunks(instance, instance->input_buffer, instance->result_buffer);
-
-        if(error != EmvErrorNone) break;
-
-        if(!emv_decode_response_bit_buffer(instance->result_buffer, data->app)) {
-            error = EmvErrorProtocol;
-            break;
-        }
-    } while(false);
+    error = emv_send_and_decode_response(instance, data);
 
     if(error != EmvErrorNone) {
         FURI_LOG_W(TAG, "Select PPSE failed, error: %d", error);
@@ -309,16 +321,8 @@ EmvError emv_poller_start_application(EmvPoller* instance) {
     bit_buffer_append_byte(instance->input_buffer, 0x00);
 
     FURI_LOG_T(TAG, "Sending Start Application...");
-    do {
-        error = emv_send_chunks(instance, instance->input_buffer, instance->result_buffer);
 
-        if(error != EmvErrorNone) break;
-
-        if(!emv_decode_response_bit_buffer(instance->result_buffer, data->app)) {
-            error = EmvErrorProtocol;
-            break;
-        }
-    } while(false);
+    error = emv_send_and_decode_response(instance, data);
 
     if(error != EmvErrorNone) {
         FURI_LOG_E(TAG, "Start Application failed, error: %d", error);
@@ -355,20 +359,7 @@ EmvError emv_poller_get_processing_options(EmvPoller* instance) {
 
     FURI_LOG_T(TAG, "Sending Get Processing Options...");
 
-    do {
-        error = emv_send_chunks(instance, instance->input_buffer, instance->result_buffer);
-
-        if(error != EmvErrorNone) {
-            FURI_LOG_D(TAG, "emv_send_chunks() failed, error: %d", error);
-            break;
-        }
-
-        if(!emv_decode_response_bit_buffer(instance->result_buffer, data->app)) {
-            FURI_LOG_D(TAG, "emv_decode_response_bit_buffer() failed");
-            error = EmvErrorProtocol;
-            break;
-        }
-    } while(false);
+    error = emv_send_and_decode_response(instance, data);
 
     if(error != EmvErrorNone) {
         FURI_LOG_W(TAG, "Get Processing Options failed, error: %d", error);
