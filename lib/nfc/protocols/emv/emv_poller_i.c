@@ -328,7 +328,6 @@ EmvError emv_poller_start_application(EmvPoller* instance) {
 }
 
 EmvError emv_poller_get_processing_options(EmvPoller* instance) {
-    bool card_num_read = false;
     // Cla: 80, Ins: A8, P1: 00, P2: 00
     const uint8_t emv_gpo_header[] = {0x80, 0xA8, 0x00, 0x00};
     APDU pdol_data = {0, {0}};
@@ -368,10 +367,6 @@ EmvError emv_poller_get_processing_options(EmvPoller* instance) {
             FURI_LOG_I(TAG, "b2");
             error = EmvErrorProtocol;
             break;
-        }
-
-        if(!furi_string_empty(instance->app->card_number)) {
-            card_num_read = true;
         }
     } while(false);
 
