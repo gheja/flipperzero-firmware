@@ -12,6 +12,7 @@ typedef enum {
     EmvPollerStateIdle,
     EmvPollerStateSelectPpse,
     EmvPollerStateStartApplication,
+    EmvPollerStateGetProcessingOptions,
     EmvPollerStateReadFailed,
     EmvPollerStateReadSuccess,
 
@@ -53,8 +54,6 @@ EmvError emv_poller_select_ppse(EmvPoller* instance);
 EmvError emv_poller_start_application(EmvPoller* instance);
 
 EmvError emv_poller_get_processing_options(EmvPoller* instance);
-
-EmvError emv_poller_read_all_files(EmvPoller* instance);
 
 #ifdef __cplusplus
 }

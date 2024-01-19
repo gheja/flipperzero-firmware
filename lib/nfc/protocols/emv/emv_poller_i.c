@@ -326,3 +326,61 @@ EmvError emv_poller_start_application(EmvPoller* instance) {
 
     return error;
 }
+
+EmvError emv_poller_get_processing_options(EmvPoller* instance) {
+    bool card_num_read = false;
+    // Cla: 80, Ins: A8, P1: 00, P2: 00
+    const uint8_t emv_gpo_header[] = {0x80, 0xA8, 0x00, 0x00};
+    APDU pdol_data = {0, {0}};
+    EmvData* data = instance->data;
+    EmvError error;
+
+    // TODO: update pdol_data
+
+    furi_assert(instance->input_buffer);
+
+    bit_buffer_reset(instance->input_buffer);
+
+    // Copy header
+    bit_buffer_append_bytes(instance->input_buffer, emv_gpo_header, sizeof(emv_gpo_header));
+
+    // Prepare and copy PDOL parameters
+    bit_buffer_append_byte(instance->input_buffer, 0x02 + pdol_data.size);
+    bit_buffer_append_byte(instance->input_buffer, 0x83);
+    bit_buffer_append_byte(instance->input_buffer, pdol_data.size);
+
+    bit_buffer_append_bytes(instance->input_buffer, pdol_data.data, pdol_data.size);
+
+    // Copy final NUL
+    bit_buffer_append_byte(instance->input_buffer, 0x00);
+
+    FURI_LOG_D(TAG, "Getting Processing options...");
+
+    do {
+        error = emv_send_chunks(instance, instance->input_buffer, instance->result_buffer);
+
+        if(error != EmvErrorNone) {
+            FURI_LOG_I(TAG, "b1");
+            break;
+        }
+
+        if(!emv_decode_response_bit_buffer(instance->result_buffer, data->app)) {
+            FURI_LOG_I(TAG, "b2");
+            error = EmvErrorProtocol;
+            break;
+        }
+
+        if(!furi_string_empty(instance->app->card_number)) {
+            card_num_read = true;
+        }
+    } while(false);
+
+    FURI_LOG_I(TAG, "card_num_read: %d", card_num_read);
+    FURI_LOG_I(TAG, "Processing options error: %d", error);
+
+    if(error != EmvErrorNone) {
+        FURI_LOG_E(TAG, "Failed to get Processing options");
+    }
+
+    return error;
+}
