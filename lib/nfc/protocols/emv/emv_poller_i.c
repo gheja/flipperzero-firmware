@@ -359,12 +359,12 @@ EmvError emv_poller_get_processing_options(EmvPoller* instance) {
         error = emv_send_chunks(instance, instance->input_buffer, instance->result_buffer);
 
         if(error != EmvErrorNone) {
-            FURI_LOG_I(TAG, "b1");
+            FURI_LOG_D(TAG, "emv_send_chunks() failed, error: %d", error);
             break;
         }
 
         if(!emv_decode_response_bit_buffer(instance->result_buffer, data->app)) {
-            FURI_LOG_I(TAG, "b2");
+            FURI_LOG_D(TAG, "emv_decode_response_bit_buffer() failed");
             error = EmvErrorProtocol;
             break;
         }

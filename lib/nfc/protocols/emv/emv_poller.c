@@ -104,7 +104,7 @@ static NfcCommand emv_poller_handler_get_processing_options(EmvPoller* instance)
 }
 
 static NfcCommand emv_poller_handler_read_fail(EmvPoller* instance) {
-    FURI_LOG_D(TAG, "Read Failed");
+    FURI_LOG_I(TAG, "Read failed");
     iso14443_4a_poller_halt(instance->iso14443_4a_poller);
     instance->emv_event.data->error = instance->error;
     NfcCommand command = instance->callback(instance->general_event, instance->context);
@@ -113,7 +113,7 @@ static NfcCommand emv_poller_handler_read_fail(EmvPoller* instance) {
 }
 
 static NfcCommand emv_poller_handler_read_success(EmvPoller* instance) {
-    FURI_LOG_D(TAG, "Read success.");
+    FURI_LOG_I(TAG, "Read success");
     iso14443_4a_poller_halt(instance->iso14443_4a_poller);
     instance->emv_event.type = EmvPollerEventTypeReadSuccess;
     NfcCommand command = instance->callback(instance->general_event, instance->context);
