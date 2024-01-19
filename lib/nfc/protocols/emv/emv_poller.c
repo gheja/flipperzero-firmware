@@ -68,7 +68,7 @@ static NfcCommand emv_poller_handler_select_ppse(EmvPoller* instance) {
         FURI_LOG_D(TAG, "Select PPSE success");
         instance->state = EmvPollerStateStartApplication;
     } else {
-        FURI_LOG_E(TAG, "Failed to Select PPSE");
+        FURI_LOG_E(TAG, "Select PPSE failed");
         iso14443_4a_poller_halt(instance->iso14443_4a_poller);
         instance->state = EmvPollerStateReadFailed;
     }
@@ -79,10 +79,10 @@ static NfcCommand emv_poller_handler_select_ppse(EmvPoller* instance) {
 static NfcCommand emv_poller_handler_start_application(EmvPoller* instance) {
     instance->error = emv_poller_start_application(instance);
     if(instance->error == EmvErrorNone) {
-        FURI_LOG_D(TAG, "Start application success");
+        FURI_LOG_D(TAG, "Start Application success");
         instance->state = EmvPollerStateGetProcessingOptions;
     } else {
-        FURI_LOG_E(TAG, "Failed to Start application");
+        FURI_LOG_E(TAG, "Start Application failed");
         iso14443_4a_poller_halt(instance->iso14443_4a_poller);
         instance->state = EmvPollerStateReadFailed;
     }
@@ -93,10 +93,10 @@ static NfcCommand emv_poller_handler_start_application(EmvPoller* instance) {
 static NfcCommand emv_poller_handler_get_processing_options(EmvPoller* instance) {
     instance->error = emv_poller_get_processing_options(instance);
     if(instance->error == EmvErrorNone) {
-        FURI_LOG_D(TAG, "Get processing options success");
+        FURI_LOG_D(TAG, "Get Processing Options success");
         instance->state = EmvPollerStateReadSuccess;
     } else {
-        FURI_LOG_E(TAG, "Failed to Get processing options, ignoring.");
+        FURI_LOG_E(TAG, "Get Processing Options failed, ignoring.");
         instance->state = EmvPollerStateReadSuccess;
     }
 

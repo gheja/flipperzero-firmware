@@ -2,7 +2,7 @@
 
 #include <furi.h>
 
-#define TAG "EmvPoller"
+#define TAG "EMV"
 
 EmvError emv_process_error(Iso14443_4aError error) {
     switch(error) {
@@ -249,7 +249,7 @@ EmvError emv_poller_select_ppse(EmvPoller* instance) {
     EmvData* data = instance->data;
     EmvError error;
 
-    FURI_LOG_T(TAG, "Sending select PPSE...");
+    FURI_LOG_T(TAG, "Sending Select PPSE...");
 
     const uint8_t emv_select_ppse_cmd[] = {
         0x00, 0xA4, // SELECT ppse
@@ -275,7 +275,9 @@ EmvError emv_poller_select_ppse(EmvPoller* instance) {
         }
     } while(false);
 
-    FURI_LOG_I(TAG, "Select PPSE error: %d", error);
+    if(error != EmvErrorNone) {
+        FURI_LOG_W(TAG, "Select PPSE failed, error: %d", error);
+    }
 
     return error;
 }
@@ -306,7 +308,7 @@ EmvError emv_poller_start_application(EmvPoller* instance) {
     // Copy final NUL
     bit_buffer_append_byte(instance->input_buffer, 0x00);
 
-    FURI_LOG_D(TAG, "Sending Start application...");
+    FURI_LOG_T(TAG, "Sending Start Application...");
     do {
         error = emv_send_chunks(instance, instance->input_buffer, instance->result_buffer);
 
@@ -318,10 +320,8 @@ EmvError emv_poller_start_application(EmvPoller* instance) {
         }
     } while(false);
 
-    FURI_LOG_I(TAG, "Start application error: %d", error);
-
     if(error != EmvErrorNone) {
-        FURI_LOG_E(TAG, "Failed to start application");
+        FURI_LOG_E(TAG, "Start Application failed, error: %d", error);
     }
 
     return error;
@@ -354,7 +354,7 @@ EmvError emv_poller_get_processing_options(EmvPoller* instance) {
     // Copy final NUL
     bit_buffer_append_byte(instance->input_buffer, 0x00);
 
-    FURI_LOG_D(TAG, "Getting Processing options...");
+    FURI_LOG_T(TAG, "Sending Get Processing Options...");
 
     do {
         error = emv_send_chunks(instance, instance->input_buffer, instance->result_buffer);
@@ -375,11 +375,8 @@ EmvError emv_poller_get_processing_options(EmvPoller* instance) {
         }
     } while(false);
 
-    FURI_LOG_I(TAG, "card_num_read: %d", card_num_read);
-    FURI_LOG_I(TAG, "Processing options error: %d", error);
-
     if(error != EmvErrorNone) {
-        FURI_LOG_E(TAG, "Failed to get Processing options");
+        FURI_LOG_W(TAG, "Get Processing Options failed, error: %d", error);
     }
 
     return error;
