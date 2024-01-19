@@ -273,9 +273,11 @@ EmvError emv_poller_select_ppse(EmvPoller* instance) {
     FURI_LOG_T(TAG, "Sending Select PPSE...");
 
     const uint8_t emv_select_ppse_cmd[] = {
-        0x00, 0xA4, // SELECT ppse
-        0x04, 0x00, // P1:By name, P2: empty
-        0x0e, // Lc: Data length
+        0x00, // Cla: 00
+        0xA4, // Ins: Select
+        0x04, // P1: PPSE by name
+        0x00, // P2: First or only occurence
+        0x0e, // Lc (data length)
         0x32, 0x50, 0x41, 0x59, 0x2e, 0x53, 0x59, // Data string: 2PAY.SYS.DDF01 (PPSE)
         0x53, 0x2e, 0x44, 0x44, 0x46, 0x30, 0x31,
         0x00 // Le
@@ -300,10 +302,10 @@ EmvError emv_poller_start_application(EmvPoller* instance) {
     EmvError error;
 
     const uint8_t emv_select_header[] = {
-        0x00,
-        0xA4, // SELECT application
-        0x04,
-        0x00 // P1:By name, P2:First or only occurence
+        0x00, // Cla: -
+        0xA4, // Ins: SELECT application
+        0x04, // P1: By name
+        0x00 // P2: First or only occurence
     };
 
     bit_buffer_reset(instance->input_buffer);
@@ -311,13 +313,13 @@ EmvError emv_poller_start_application(EmvPoller* instance) {
     // Copy header
     bit_buffer_append_bytes(instance->input_buffer, emv_select_header, sizeof(emv_select_header));
 
-    // Copy AID length
+    // Lc (data length)
     bit_buffer_append_byte(instance->input_buffer, (uint8_t)data->app->aid.size);
 
     // Copy AID
     bit_buffer_append_bytes(instance->input_buffer, data->app->aid.data, data->app->aid.size);
 
-    // Copy final NUL
+    // Le
     bit_buffer_append_byte(instance->input_buffer, 0x00);
 
     FURI_LOG_T(TAG, "Sending Start Application...");
@@ -332,8 +334,12 @@ EmvError emv_poller_start_application(EmvPoller* instance) {
 }
 
 EmvError emv_poller_get_processing_options(EmvPoller* instance) {
-    // Cla: 80, Ins: A8, P1: 00, P2: 00
-    const uint8_t emv_gpo_header[] = {0x80, 0xA8, 0x00, 0x00};
+    const uint8_t emv_gpo_header[] = {
+        0x80, // Cla: 80
+        0xA8, // Ins: Get Processing Options
+        0x00, // P1: -
+        0x00 // P2: -
+    };
     APDU pdol_data = {0, {0}};
     EmvData* data = instance->data;
     EmvError error;
@@ -347,14 +353,16 @@ EmvError emv_poller_get_processing_options(EmvPoller* instance) {
     // Copy header
     bit_buffer_append_bytes(instance->input_buffer, emv_gpo_header, sizeof(emv_gpo_header));
 
-    // Prepare and copy PDOL parameters
+    // Lc (data length)
     bit_buffer_append_byte(instance->input_buffer, 0x02 + pdol_data.size);
+
+    // Copy PDOL parameters
     bit_buffer_append_byte(instance->input_buffer, 0x83);
     bit_buffer_append_byte(instance->input_buffer, pdol_data.size);
 
     bit_buffer_append_bytes(instance->input_buffer, pdol_data.data, pdol_data.size);
 
-    // Copy final NUL
+    // Le
     bit_buffer_append_byte(instance->input_buffer, 0x00);
 
     FURI_LOG_T(TAG, "Sending Get Processing Options...");
