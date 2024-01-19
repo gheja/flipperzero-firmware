@@ -20,6 +20,9 @@ static NfcCommand nfc_scene_read_poller_callback_emv(NfcGenericEvent event, void
             instance->nfc_device, NfcProtocolEmv, nfc_poller_get_data(instance->poller));
         view_dispatcher_send_custom_event(instance->view_dispatcher, NfcCustomEventPollerSuccess);
         return NfcCommandStop;
+    } else if(emv_event->type == EmvPollerEventTypeReadFailed) {
+        view_dispatcher_send_custom_event(instance->view_dispatcher, NfcCustomEventPollerFailure);
+        return NfcCommandStop;
     }
 
     return NfcCommandContinue;
