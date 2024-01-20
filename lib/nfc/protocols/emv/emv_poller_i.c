@@ -88,19 +88,19 @@ static bool emv_decode_response(const uint8_t* buff, uint16_t len, EmvApplicatio
             if((first_byte & 31) == 31) { // 2-byte tag
                 tag = buff[i] << 8 | buff[i + 1];
                 i++;
-                FURI_LOG_T(TAG, " 2-byte TLV EMV tag: %04X", tag);
+                // FURI_LOG_T(TAG, " 2-byte TLV EMV tag: %04X", tag);
             } else {
                 tag = buff[i];
-                FURI_LOG_T(TAG, " 1-byte TLV EMV tag: %02X", tag);
+                // FURI_LOG_T(TAG, " 1-byte TLV EMV tag: %02X", tag);
             }
             i++;
             tlen = buff[i];
             if((tlen & 128) == 128) { // long length value
                 i++;
                 tlen = buff[i];
-                FURI_LOG_T(TAG, " 2-byte TLV length: %d", tlen);
+                // FURI_LOG_T(TAG, " 2-byte TLV length: %d", tlen);
             } else {
-                FURI_LOG_T(TAG, " 1-byte TLV length: %d", tlen);
+                // FURI_LOG_T(TAG, " 1-byte TLV length: %d", tlen);
             }
             i++;
             if((first_byte & 32) == 32) { // "Constructed" -- contains more TLV data to parse
@@ -260,6 +260,9 @@ static bool emv_decode_response(const uint8_t* buff, uint16_t len, EmvApplicatio
                     FURI_LOG_T(TAG, "found EMV_TAG_TRACK2_DATA %04X, len: %d", tag, tlen);
                     FURI_LOG_T(TAG, "Card number: %s", furi_string_get_cstr(app->card_number));
                     FURI_LOG_T(TAG, "Expiration: %02d/%02d", app->exp_month, app->exp_year);
+                    break;
+                default:
+                    FURI_LOG_D(TAG, "found (unknown tag) %02X, len: %d", tag, tlen);
                     break;
                 }
             }
