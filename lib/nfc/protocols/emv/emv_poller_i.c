@@ -119,6 +119,14 @@ static bool emv_decode_response(const uint8_t* buff, uint16_t len, EmvApplicatio
                     success = true;
                     FURI_LOG_T(TAG, "found EMV_TAG_AID %02X, len: %d", tag, tlen);
                     break;
+                case EMV_TAG_DF_NAME:
+                    success = true;
+                    FURI_LOG_T(TAG, "found EMV_TAG_DF_NAME %02X, len: %d", tag, tlen);
+                    break;
+                case EMV_TAG_SFI:
+                    success = true;
+                    FURI_LOG_T(TAG, "found EMV_TAG_SFI %02X, len: %d", tag, tlen);
+                    break;
                 case EMV_TAG_PRIORITY:
                     memcpy(&app->priority, &buff[i], tlen);
                     FURI_LOG_T(
@@ -134,7 +142,7 @@ static bool emv_decode_response(const uint8_t* buff, uint16_t len, EmvApplicatio
                     success = true;
                     FURI_LOG_T(
                         TAG,
-                        "found EMV_TAG_CARD_NAME %02X, len: %d, value: %s",
+                        "found EMV_TAG_FCI_ISSUER %02X, len: %d, value: %s",
                         tag,
                         tlen,
                         furi_string_get_cstr(app->fci_issuer));
@@ -192,6 +200,30 @@ static bool emv_decode_response(const uint8_t* buff, uint16_t len, EmvApplicatio
                 case EMV_TAG_COUNTRY_CODE:
                     app->country_code = (buff[i] << 8 | buff[i + 1]);
                     success = true;
+                    break;
+                case EMV_TAG_LANGUAGE_PREFERENCE:
+                    success = true;
+                    FURI_LOG_T(TAG, "found EMV_TAG_LANGUAGE_PREFERENCE %02X, len: %d", tag, tlen);
+                    if((tlen >= 2) && (tlen % 2 == 0)) {
+                        furi_string_cat(app->extra_text, "Languages: ");
+
+                        for(int x = 0; x < tlen; x += 2) {
+                            furi_string_cat_printf(
+                                app->extra_text, "%c%c ", buff[i + x], buff[i + x + 1]);
+                        }
+
+                        furi_string_cat(app->extra_text, "\n");
+                    }
+                    break;
+                case EMV_TAG_ISSUER_CODE_TABLE_INDEX:
+                    success = true;
+                    FURI_LOG_T(
+                        TAG, "found EMV_TAG_ISSUER_CODE_TABLE_INDEX %02X, len: %d", tag, tlen);
+                    break;
+                case EMV_TAG_APPLICATION_PREFERRED_NAME:
+                    success = true;
+                    FURI_LOG_T(
+                        TAG, "found EMV_TAG_APPLICATION_PREFERRED_NAME %02X, len: %d", tag, tlen);
                     break;
                 case EMV_TAG_TRANSACTION_LOG_INFO:
                     app->transaction_log_sfi = buff[i];

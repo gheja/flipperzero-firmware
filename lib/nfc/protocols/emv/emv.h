@@ -11,13 +11,13 @@ extern "C" {
 #define EVM_MAX_APDU_LEN 128
 #define EVM_MAX_AID_SIZE 32
 
-#define EMV_TAG_APP_TEMPLATE 0x61 //
-#define EMV_TAG_AID 0x4F //
-#define EMV_TAG_PRIORITY 0x87 //
+#define EMV_TAG_APP_TEMPLATE 0x61
+#define EMV_TAG_AID 0x4F
+#define EMV_TAG_PRIORITY 0x87
 #define EMV_TAG_PDOL 0x9F38
 #define EMV_TAG_FCI_ISSUER 0x50
 #define EMV_TAG_FCI 0xBF0C
-#define EMV_TAG_LOG_CTRL 0x9F4D
+// #define EMV_TAG_LOG_CTRL 0x9F4D
 #define EMV_TAG_CARD_NUM 0x57
 #define EMV_TAG_PAN 0x5A
 #define EMV_TAG_AFL 0x94
@@ -27,9 +27,16 @@ extern "C" {
 #define EMV_TAG_CARDHOLDER_NAME 0x5F20
 
 #define EMV_TAG_DF_NAME 0x84
+#define EMV_TAG_SFI 0x88
 #define EMV_TAG_TRANSACTION_LOG_INFO 0x9F4D
 #define EMV_TAG_TRACK1_DATA 0x56
 #define EMV_TAG_TRACK2_DATA 0x9F6B
+
+#define EMV_TAG_APPLICATION_PREFERRED_NAME 0x9F12
+#define EMV_TAG_ISSUER_CODE_TABLE_INDEX 0x9F11
+#define EMV_TAG_LANGUAGE_PREFERENCE 0x5F2D
+// #define EMV_TAG_ Application Selection Registered Proprietary Data  0x9F0A
+// #define EMV_TAG_FORM_FACTOR_INDICATOR 0x9F6E // 3rdparty proprietary data
 
 typedef struct {
     uint16_t tag;
