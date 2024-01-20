@@ -56,9 +56,31 @@ void emv_furi_string(FuriString* string, const uint8_t* buff, uint16_t length) {
 
 void emv_furi_string_card_number(FuriString* string, const uint8_t* buff, uint16_t length) {
     furi_string_reset(string);
+    // os.path.exists()
     for(uint8_t i = 0; i < length; i++) {
         furi_string_cat_printf(string, "%02X", buff[i]);
     }
+}
+
+void emv_add_extra_text_hex(
+    const char* title,
+    const uint8_t* buff,
+    uint16_t start,
+    uint16_t len,
+    EmvApplicationCard* app) {
+    furi_string_cat(app->extra_text, title);
+    for(int x = 0; x < len; x++) {
+        furi_string_cat_printf(app->extra_text, "%02X ", buff[start + x]);
+    }
+    furi_string_cat(app->extra_text, "(");
+    for(int x = 0; x < len; x++) {
+        if(buff[start + x] >= 0x20 && buff[start + x] <= 0x7e) {
+            furi_string_cat_printf(app->extra_text, "%c", buff[start + x]);
+        } else {
+            furi_string_cat(app->extra_text, ".");
+        }
+    }
+    furi_string_cat(app->extra_text, ")\n");
 }
 
 static bool emv_decode_response(const uint8_t* buff, uint16_t len, EmvApplicationCard* app) {
@@ -116,10 +138,12 @@ static bool emv_decode_response(const uint8_t* buff, uint16_t len, EmvApplicatio
                 case EMV_TAG_AID:
                     memcpy(app->aid.data, &buff[i], tlen);
                     app->aid.size = tlen;
+                    emv_add_extra_text_hex("AID: ", buff, i, tlen, app);
                     success = true;
                     FURI_LOG_T(TAG, "found EMV_TAG_AID %02X, len: %d", tag, tlen);
                     break;
                 case EMV_TAG_DF_NAME:
+                    emv_add_extra_text_hex("DF: ", buff, i, tlen, app);
                     success = true;
                     FURI_LOG_T(TAG, "found EMV_TAG_DF_NAME %02X, len: %d", tag, tlen);
                     break;
@@ -221,6 +245,7 @@ static bool emv_decode_response(const uint8_t* buff, uint16_t len, EmvApplicatio
                         TAG, "found EMV_TAG_ISSUER_CODE_TABLE_INDEX %02X, len: %d", tag, tlen);
                     break;
                 case EMV_TAG_APPLICATION_PREFERRED_NAME:
+                    emv_add_extra_text_hex("APN?: ", buff, i, tlen, app);
                     success = true;
                     FURI_LOG_T(
                         TAG, "found EMV_TAG_APPLICATION_PREFERRED_NAME %02X, len: %d", tag, tlen);
