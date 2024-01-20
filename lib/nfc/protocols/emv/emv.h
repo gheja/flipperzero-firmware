@@ -15,7 +15,7 @@ extern "C" {
 #define EMV_TAG_AID 0x4F //
 #define EMV_TAG_PRIORITY 0x87 //
 #define EMV_TAG_PDOL 0x9F38
-#define EMV_TAG_CARD_NAME 0x50 //
+#define EMV_TAG_FCI_ISSUER 0x50
 #define EMV_TAG_FCI 0xBF0C
 #define EMV_TAG_LOG_CTRL 0x9F4D
 #define EMV_TAG_CARD_NUM 0x57
@@ -49,7 +49,7 @@ typedef struct {
 typedef struct {
     uint8_t priority;
     AID aid;
-    FuriString* name;
+    FuriString* fci_issuer;
     FuriString* card_number;
     uint8_t exp_month;
     uint8_t exp_year;

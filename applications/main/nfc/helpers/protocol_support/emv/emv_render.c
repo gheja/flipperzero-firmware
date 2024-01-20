@@ -4,8 +4,8 @@
 
 void nfc_render_emv_issuer(const EmvData* data, FuriString* str) {
     furi_string_cat_printf(str, "Issuer: ");
-    if(furi_string_size(data->app->name) > 0) {
-        furi_string_cat(str, data->app->name);
+    if(furi_string_size(data->app->fci_issuer) > 0) {
+        furi_string_cat(str, data->app->fci_issuer);
     } else {
         furi_string_cat(str, "(unknown)");
     }

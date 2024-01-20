@@ -129,15 +129,15 @@ static bool emv_decode_response(const uint8_t* buff, uint16_t len, EmvApplicatio
                         app->priority);
                     success = true;
                     break;
-                case EMV_TAG_CARD_NAME:
-                    emv_furi_string(app->name, &buff[i], tlen);
+                case EMV_TAG_FCI_ISSUER:
+                    emv_furi_string(app->fci_issuer, &buff[i], tlen);
                     success = true;
                     FURI_LOG_T(
                         TAG,
                         "found EMV_TAG_CARD_NAME %02X, len: %d, value: %s",
                         tag,
                         tlen,
-                        furi_string_get_cstr(app->name));
+                        furi_string_get_cstr(app->fci_issuer));
                     break;
                 case EMV_TAG_PDOL:
                     memcpy(app->pdol.data, &buff[i], tlen);

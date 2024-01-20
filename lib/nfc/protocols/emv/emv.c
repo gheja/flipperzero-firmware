@@ -18,7 +18,7 @@ const NfcDeviceBase nfc_device_emv = {
 
 EmvApplicationCard* emv_app_alloc() {
     EmvApplicationCard* app = malloc(sizeof(EmvApplicationCard));
-    app->name = furi_string_alloc();
+    app->fci_issuer = furi_string_alloc();
     app->card_number = furi_string_alloc();
     app->extra_text = furi_string_alloc();
     emv_app_reset(app);
@@ -27,11 +27,11 @@ EmvApplicationCard* emv_app_alloc() {
 
 void emv_app_free(EmvApplicationCard* app) {
     furi_assert(app);
-    furi_assert(app->name);
+    furi_assert(app->fci_issuer);
     furi_assert(app->card_number);
     furi_assert(app->extra_text);
 
-    furi_string_free(app->name);
+    furi_string_free(app->fci_issuer);
     furi_string_free(app->card_number);
     furi_string_free(app->extra_text);
     free(app);
@@ -39,7 +39,7 @@ void emv_app_free(EmvApplicationCard* app) {
 
 void emv_app_reset(EmvApplicationCard* app) {
     furi_assert(app);
-    furi_assert(app->name);
+    furi_assert(app->fci_issuer);
     furi_assert(app->card_number);
     furi_assert(app->extra_text);
 
@@ -48,7 +48,7 @@ void emv_app_reset(EmvApplicationCard* app) {
     memset(app->aid.data, 0x00, sizeof(uint8_t) * EVM_MAX_AID_SIZE); // TODO: is this ok?
     app->aid.size = 0;
 
-    furi_string_reset(app->name);
+    furi_string_reset(app->fci_issuer);
     furi_string_reset(app->card_number);
     app->exp_month = 0;
     app->exp_year = 0;
@@ -69,12 +69,12 @@ void emv_app_reset(EmvApplicationCard* app) {
 
 void emv_app_copy(EmvApplicationCard* app, const EmvApplicationCard* other) {
     furi_assert(app);
-    furi_assert(app->name);
+    furi_assert(app->fci_issuer);
     furi_assert(app->card_number);
     furi_assert(app->extra_text);
 
     furi_assert(other);
-    furi_assert(other->name);
+    furi_assert(other->fci_issuer);
     furi_assert(other->card_number);
     furi_assert(other->extra_text);
 
@@ -83,7 +83,7 @@ void emv_app_copy(EmvApplicationCard* app, const EmvApplicationCard* other) {
     memcpy(app->aid.data, other->aid.data, sizeof(uint8_t) * EVM_MAX_AID_SIZE);
     app->aid.size = other->aid.size;
 
-    furi_string_set(app->name, other->name);
+    furi_string_set(app->fci_issuer, other->fci_issuer);
     furi_string_set(app->card_number, other->card_number);
     app->exp_month = other->exp_month;
     app->exp_year = other->exp_year;
