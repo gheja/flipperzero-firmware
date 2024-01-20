@@ -37,6 +37,7 @@ extern "C" {
 #define EMV_TAG_LANGUAGE_PREFERENCE 0x5F2D
 // #define EMV_TAG_ Application Selection Registered Proprietary Data  0x9F0A
 // #define EMV_TAG_FORM_FACTOR_INDICATOR 0x9F6E // 3rdparty proprietary data
+#define EMV_TAG_AVAILABLE_OFFLINE_SPENDING_AMOUNT 0x9F5D
 
 typedef struct {
     uint16_t tag;

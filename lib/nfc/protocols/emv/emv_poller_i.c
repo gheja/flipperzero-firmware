@@ -262,6 +262,14 @@ static bool emv_decode_response(const uint8_t* buff, uint16_t len, EmvApplicatio
                         app->transaction_log_sfi,
                         app->transaction_log_length);
                     break;
+                case EMV_TAG_AVAILABLE_OFFLINE_SPENDING_AMOUNT:
+                    success = true;
+                    FURI_LOG_T(
+                        TAG,
+                        "found EMV_TAG_AVAILABLE_OFFLINE_SPENDING_AMOUNT %02X, len: %d",
+                        tag,
+                        tlen);
+                    break;
                 case EMV_TAG_TRACK1_DATA:
                     FURI_LOG_T(TAG, "found EMV_TAG_TRACK1_DATA %02X, len: %d", tag, tlen);
                     break;
